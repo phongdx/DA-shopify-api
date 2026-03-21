@@ -1,12 +1,12 @@
 import axios from "axios";
 import { Product } from "../types/product";
 
-export const fetchProducts = async (): Promise<Product[]> => {
+export const fetchProducts = async (searchTerm: string): Promise<Product[]> => {
   try {
     const response = await axios.get(
-      "https://api.darkglass.com/shopify/products"
+      "https://api.darkglass.com/shopify/products?all=1"
     );
-    return response.data.data.edges.map((p: any) => {
+    const mappedProducts = response.data.data.edges.map((p: any) => {
       const productData = p.node;
       const priceInfo = productData.variants.edges[0].node;
       return {
@@ -16,6 +16,12 @@ export const fetchProducts = async (): Promise<Product[]> => {
         sku: priceInfo.sku,
       };
     });
+    const filteredProducts = mappedProducts.filter(
+      (p: Product) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return filteredProducts;
   } catch (error) {
     throw error;
   }
