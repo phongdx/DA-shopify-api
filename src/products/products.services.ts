@@ -16,11 +16,13 @@ export const fetchProducts = async (searchTerm: string): Promise<Product[]> => {
         sku: priceInfo.sku,
       };
     });
-    const filteredProducts = mappedProducts.filter(
-      (p: Product) =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.sku.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProducts = mappedProducts
+      .filter((p: Product) => p.price.amount !== "0.0" && p.sku !== null)
+      .filter(
+        (p: Product) =>
+          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.sku.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     return filteredProducts;
   } catch (error) {
     throw error;
